@@ -14,7 +14,7 @@ void main() {
     System.out.println(" -------------");
     product1.setName("Celular");
     product1.setSku("SMS-GLX-BR-18L-SM");
-    product1.setPrice(new BigDecimal("999"));
+    product1.setPrice(new BigDecimal("599"));
     System.out.println(" -------------");
 
     System.out.println(product1);
@@ -24,7 +24,7 @@ void main() {
     System.out.println(" -------------");
     product2.setName("Computador");
     product2.setSku("SMS-GLX-BR-18L-SM");
-    product2.setPrice(new BigDecimal("999"));
+    product2.setPrice(new BigDecimal("1999"));
     System.out.println(" -------------");
 
     System.out.println(product2);
@@ -34,7 +34,7 @@ void main() {
     System.out.println(" -------------");
     product3.setName("Tablet");
     product3.setSku("SMS-GLX-BR-18L-SM");
-    product3.setPrice(new BigDecimal("999"));
+    product3.setPrice(new BigDecimal("3999"));
     System.out.println(" -------------");
     System.out.println(product3);
     System.out.println(" -------------");
