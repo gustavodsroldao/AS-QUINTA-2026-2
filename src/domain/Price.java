@@ -21,10 +21,16 @@ public class Price implements EntityInterface {
     }
 
     @Override
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    @Override
     public String toString() {
         return "Price{" +
                 ", price=" + price +
                 ", date=" + date +
                 '}';
     }
+
 }

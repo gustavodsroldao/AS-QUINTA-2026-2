@@ -23,11 +23,11 @@ public class Product implements EntityInterface{
         this.price = price;
     }
 
-    public Product(BigDecimal price, String name, String sku, UUID uuid) {
-        this.price = price;
-        this.name = name;
-        this.sku = sku;
+    public Product(UUID uuid, String sku, String name, BigDecimal price) {
         this.uuid = uuid;
+        this.sku = sku;
+        this.name = name;
+        this.price = price;
     }
 
     public String getSku() {
@@ -87,12 +87,19 @@ public class Product implements EntityInterface{
     }
 
     @Override
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    @Override
     public String toString() {
         return "Product{" +
+                "UUID='" + uuid.toString() + '\'' +
                 "sku='" + sku + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", historicalPrice=" + historicalPrice +
                 ", datePrice=" + datePrice;
     }
+
 }
