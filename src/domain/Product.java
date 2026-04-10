@@ -1,6 +1,5 @@
 package domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -9,7 +8,7 @@ public class Product implements EntityInterface{
     private UUID uuid;
     private String sku;
     private String name;
-    private BigDecimal price;
+    private Float price;
     private Date datePrice;
     private ArrayList<Price> historicalPrice = new ArrayList<>();
 
@@ -17,13 +16,13 @@ public class Product implements EntityInterface{
 
     }
 
-    public Product(String sku, String name, BigDecimal price) {
+    public Product(String sku, String name, Float price) {
         this.sku = sku;
         this.name = name;
         this.price = price;
     }
 
-    public Product(UUID uuid, String sku, String name, BigDecimal price) {
+    public Product(UUID uuid, String sku, String name, Float price) {
         this.uuid = uuid;
         this.sku = sku;
         this.name = name;
@@ -46,12 +45,12 @@ public class Product implements EntityInterface{
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Float getPrice() {
         return price;
     }
 
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Float price) {
 
 
         if (this.price != null && this.datePrice != null) {
