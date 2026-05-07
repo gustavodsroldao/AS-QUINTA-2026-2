@@ -1,0 +1,9 @@
+adapters\DatabaseStorage.class
+adapters\PersistInterface.class
+domain\EntityInterface.class
+domain\Price.class
+Main.class
+service\ServiceInterface.class
+service\ProductService.class
+utils\GenerateValue.class
+domain\Product.class
