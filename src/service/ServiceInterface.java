@@ -4,9 +4,10 @@ import domain.EntityInterface;
 
 import java.util.UUID;
 
-public interface ServiceInterface {
-    void create(EntityInterface entity);
-    void delete(EntityInterface entity);
+public interface ServiceInterface<T extends EntityInterface> {
+    void create(T entity);
+    void edit(T entity);
+    void delete(T entity);
     void listAll();
-    EntityInterface getById(UUID id);
+    T getById(UUID id);
 }

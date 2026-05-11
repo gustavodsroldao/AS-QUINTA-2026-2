@@ -1,19 +1,47 @@
 package domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-public class Product implements EntityInterface{
+@Entity
+@Table(name = "product")
+public class Product implements EntityInterface {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "uuid", length = 36)
     private UUID uuid;
+
+    @Column(name = "sku", nullable = false)
     private String sku;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "price")
     private Float price;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date_price")
     private Date datePrice;
+
+    @Transient
     private ArrayList<Price> historicalPrice = new ArrayList<>();
 
     public Product() {
-
     }
 
     public Product(String sku, String name, Float price) {
@@ -49,32 +77,14 @@ public class Product implements EntityInterface{
         return price;
     }
 
-
     public void setPrice(Float price) {
-
-
         if (this.price != null && this.datePrice != null) {
-
-            Price oldPrice = new Price(this.datePrice, this.price);
+            Price oldPrice = new Price(this.price, this.datePrice);
             historicalPrice.add(oldPrice);
         }
 
         this.price = price;
         this.datePrice = new Date();
-
-    }
-
-    public ArrayList<Price> getHistoricalPrice() {
-        return historicalPrice;
-    }
-
-    public void setHistoricalPrice(ArrayList<Price> historicalPrice) {
-        this.historicalPrice = historicalPrice;
-    }
-
-
-    public void setDate(Date date) {
-        this.datePrice = date;
     }
 
     public Date getDatePrice() {
@@ -85,6 +95,14 @@ public class Product implements EntityInterface{
         this.datePrice = datePrice;
     }
 
+    public ArrayList<Price> getHistoricalPrice() {
+        return historicalPrice;
+    }
+
+    public void setHistoricalPrice(ArrayList<Price> historicalPrice) {
+        this.historicalPrice = historicalPrice;
+    }
+
     @Override
     public UUID getUUID() {
         return this.uuid;
@@ -93,12 +111,12 @@ public class Product implements EntityInterface{
     @Override
     public String toString() {
         return "Product{" +
-                "UUID='" + uuid.toString() + '\'' +
-                "sku='" + sku + '\'' +
+                "UUID='" + uuid.toString() +'\'' +
+                "Sku='" + sku + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                ", datePrice=" + datePrice +
                 ", historicalPrice=" + historicalPrice +
-                ", datePrice=" + datePrice;
+                '}';
     }
-
 }

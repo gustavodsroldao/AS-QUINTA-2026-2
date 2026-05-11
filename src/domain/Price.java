@@ -8,7 +8,7 @@ public class Price implements EntityInterface {
     private Float price;
     private Date date;
 
-    public Price(Date date, Float price) {
+    public Price(Float price, Date date) {
         this.price = price;
         this.date = date;
     }
@@ -22,6 +22,14 @@ public class Price implements EntityInterface {
     @Override
     public UUID getUUID() {
         return this.uuid;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     @Override

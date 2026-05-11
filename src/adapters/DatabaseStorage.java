@@ -1,132 +1,103 @@
 package adapters;
 
 import domain.EntityInterface;
-import domain.Product;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import org.hibernate.Hibernate;
 
-import java.sql.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-public class DatabaseStorage implements PersistInterface {
-    private static final String JDBC_URL = "jdbc:sqlite:products.db";
+public class DatabaseStorage<T extends EntityInterface> implements PersistInterface {
+    private static final String PERSISTENCE_UNIT = "default";
 
-    private Connection db;
+    private final Class<T> type;
+    private final EntityManagerFactory emf;
 
-    public DatabaseStorage() {
-        try {
-            this.db = DriverManager.getConnection(JDBC_URL);
-            createSchema();
-            System.out.println("Conexão SQLite aberta: " + JDBC_URL);
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao conectar ao SQLite", e);
-        }
-    }
-
-    private void createSchema() throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS product (" +
-                "uuid TEXT PRIMARY KEY, " +
-                "sku TEXT NOT NULL, " +
-                "name TEXT NOT NULL, " +
-                "price REAL, " +
-                "date_price INTEGER" +
-                ")";
-
-        String sql2 = "CREATE TABLE IF NOT EXISTS product (" +
-                "uuid TEXT PRIMARY KEY, " +
-                "sku TEXT NOT NULL, " +
-                "name TEXT NOT NULL, " +
-                "price REAL, " +
-                "date_price INTEGER" +
-                ")";
-
-        try (Statement stmt = db.createStatement()) {
-            stmt.execute(sql);
-            stmt.execute(sql2);
-        }
+    public DatabaseStorage(Class<T> type) {
+        this.type = type;
+        this.emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
     }
 
     @Override
     public void save(EntityInterface entity) {
-        if (!(entity instanceof Product product)) {
-            throw new IllegalArgumentException(
-                    "Entidade não suportada: " + entity.getClass().getName());
-        }
-        UUID id = product.getUUID() != null ? product.getUUID() : UUID.randomUUID();
-        String sql = "INSERT OR REPLACE INTO product (uuid, sku, name, price, date_price) " +
-                "VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = db.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
-            stmt.setString(2, product.getSku());
-            stmt.setString(3, product.getName());
-            if (product.getPrice() == null) stmt.setNull(4, java.sql.Types.REAL);
-            else stmt.setFloat(4, product.getPrice());
-            if (product.getDatePrice() == null) stmt.setNull(5, java.sql.Types.INTEGER);
-            else stmt.setLong(5, product.getDatePrice().getTime());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao salvar produto", e);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            if (entity.getUUID() != null
+                    && em.find(entity.getClass(), entity.getUUID()) != null) {
+                em.merge(entity);
+            } else {
+                em.persist(entity);
+            }
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
         }
     }
 
     @Override
     public void delete(EntityInterface entity) {
-        try (PreparedStatement stmt = db.prepareStatement("DELETE FROM product WHERE uuid = ?")) {
-            stmt.setString(1, entity.getUUID().toString());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao apagar produto", e);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            EntityInterface managed = em.find(entity.getClass(), entity.getUUID());
+            if (managed != null) em.remove(managed);
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
         }
     }
 
     @Override
     public ArrayList<EntityInterface> listAll() {
-        ArrayList<EntityInterface> all = new ArrayList<>();
-        String sql = "SELECT uuid, sku, name, price, date_price FROM product";
-        try (Statement stmt = db.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) all.add(mapRow(rs));
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao listar produtos", e);
+        EntityManager em = emf.createEntityManager();
+        try {
+            String jpql = "SELECT e FROM " + type.getSimpleName() + " e";
+            List<T> result = em.createQuery(jpql, type).getResultList();
+            result.forEach(this::initLazyCollections);
+            return new ArrayList<>(result);
+        } finally {
+            em.close();
         }
-        return all;
     }
 
     @Override
     public EntityInterface findOneById(UUID id) {
-        String sql = "SELECT uuid, sku, name, price, date_price FROM product WHERE uuid = ?";
-        try (PreparedStatement stmt = db.prepareStatement(sql)) {
-            stmt.setString(1, id.toString());
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? mapRow(rs) : null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao buscar produto", e);
+        EntityManager em = emf.createEntityManager();
+        try {
+            T result = em.find(type, id);
+            initLazyCollections(result);
+            return result;
+        } finally {
+            em.close();
         }
     }
 
-    private Product mapRow(ResultSet rs) throws SQLException {
-        UUID uuid = UUID.fromString(rs.getString("uuid"));
-        String sku = rs.getString("sku");
-        String name = rs.getString("name");
-        float priceValue = rs.getFloat("price");
-        Float price = rs.wasNull() ? null : priceValue;
-        long millis = rs.getLong("date_price");
-        Date datePrice = rs.wasNull() ? null : new Date(millis);
-        Product p = new Product(uuid, sku, name, price);
-        p.setDatePrice(datePrice);
-        return p;
-    }
-
-    public Connection getConnection() {
-        return db;
+    private void initLazyCollections(Object entity) {
+        if (entity == null) return;
+        for (Field field : entity.getClass().getDeclaredFields()) {
+            if (!Collection.class.isAssignableFrom(field.getType())) continue;
+            try {
+                field.setAccessible(true);
+                Object value = field.get(entity);
+                if (value != null) Hibernate.initialize(value);
+            } catch (IllegalAccessException ignored) {
+            }
+        }
     }
 
     public void close() {
-        try {
-            if (db != null && !db.isClosed()) db.close();
-        } catch (SQLException e) {
-            throw new RuntimeException("Falha ao fechar conexão", e);
-        }
+        if (emf != null && emf.isOpen()) emf.close();
     }
 }
