@@ -1,21 +1,52 @@
 package domain;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.util.Date;
 import java.util.UUID;
 
+@Entity
+@Table(name = "price")
 public class Price implements EntityInterface {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "uuid", length = 36)
     private UUID uuid;
+
+    @Column(name = "price")
     private Float price;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date")
     private Date date;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Price() {
+    }
 
     public Price(Float price, Date date) {
         this.price = price;
         this.date = date;
     }
 
-    public Price(Float price, UUID uuid, Date date) {
-        this.price = price;
+    public Price(UUID uuid, Float price, Date date) {
         this.uuid = uuid;
+        this.price = price;
         this.date = date;
     }
 
@@ -24,20 +55,11 @@ public class Price implements EntityInterface {
         return this.uuid;
     }
 
-    public Float getPrice() {
-        return price;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
     @Override
     public String toString() {
         return "Price{" +
-                ", price=" + price +
+                "price=" + price +
                 ", date=" + date +
                 '}';
     }
-
 }

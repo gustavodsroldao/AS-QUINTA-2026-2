@@ -1,19 +1,12 @@
 package domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,8 +31,12 @@ public class Product implements EntityInterface {
     @Column(name = "date_price")
     private Date datePrice;
 
-    @Transient
-    private ArrayList<Price> historicalPrice = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Price> historicalPrice = new ArrayList<>();
 
     public Product() {
     }
@@ -80,6 +77,7 @@ public class Product implements EntityInterface {
     public void setPrice(Float price) {
         if (this.price != null && this.datePrice != null) {
             Price oldPrice = new Price(this.price, this.datePrice);
+            oldPrice.setProduct(this);
             historicalPrice.add(oldPrice);
         }
 
@@ -95,11 +93,11 @@ public class Product implements EntityInterface {
         this.datePrice = datePrice;
     }
 
-    public ArrayList<Price> getHistoricalPrice() {
+    public List<Price> getHistoricalPrice() {
         return historicalPrice;
     }
 
-    public void setHistoricalPrice(ArrayList<Price> historicalPrice) {
+    public void setHistoricalPrice(List<Price> historicalPrice) {
         this.historicalPrice = historicalPrice;
     }
 
