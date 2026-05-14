@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(winget install Apache.Maven --accept-package-agreements --accept-source-agreements)"
+    ]
+  }
+}
