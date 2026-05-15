@@ -41,6 +41,10 @@ public abstract class BaseService implements ServiceInterface {
         return armazenamento.findOneById(id);
     }
 
+    public ArrayList<EntityInterface> getAll() {
+        return armazenamento.listAll();
+    }
+
     public UUID generateUUID() {
         return UUID.randomUUID();
     }

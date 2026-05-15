@@ -1,4 +1,4 @@
-adapters\DatabaseStorage.class
 adapters\PersistInterface.class
 domain\EntityInterface.class
+adapters\DatabaseStorage.class
 Main.class

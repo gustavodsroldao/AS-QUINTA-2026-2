@@ -1,13 +1,15 @@
-import domain.Product;
+import service.CrawlerService;
+import service.ProductLoader;
 import service.ProductService;
 
 void main() {
-    ProductService productService = new ProductService();
+    new ProductLoader().sincronizar();
 
-    Product produto = new Product("SKU", "asas", 2f);
-    produto.setPrice(3f);
-    produto.setPrice(4f);
-    productService.create(produto);
+    System.out.println("\n--- Iniciando crawler ---");
+    try (CrawlerService crawler = new CrawlerService()) {
+        crawler.crawlAll();
+    }
 
-    productService.listAll();
+    System.out.println("\n--- Estado atual dos produtos ---");
+    new ProductService().listAll();
 }

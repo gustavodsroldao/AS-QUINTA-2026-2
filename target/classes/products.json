@@ -1,0 +1,18 @@
+[
+  {
+    "sku": "PS5-001",
+    "nome": "PlayStation 5 Slim (com leitor)",
+    "links": [
+      { "loja": "Kabum", "url": "https://www.kabum.com.br/produto/934759/console-sony-playstation-5-com-leitor-de-discos-ssd-1tb-controle-sem-fio-dualsense-2-jogos" },
+      { "loja": "Amazon", "url": "https://www.amazon.com.br/PlayStation-711719577157-5-Console-Slim/dp/B0CM9VHGY7" }
+    ]
+  },
+  {
+    "sku": "HYPERX-001",
+    "nome": "HyperX Cloud Alpha Wireless",
+    "links": [
+      { "loja": "Kabum", "url": "https://www.kabum.com.br/produto/461160/headset-gamer-hyperx-cloud-stinger-2-drivers-50mm-p3-preto-519t1aa" },
+      { "loja": "Amazon", "url": "https://www.amazon.com.br/HyperX-Cloud-Alpha-Wireless-Vermelho/dp/B09TRW57WB" }
+    ]
+  }
+]

@@ -10,6 +10,7 @@
 
         <class>domain.Product</class>
         <class>domain.Price</class>
+        <class>domain.Link</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:products.db"/>
@@ -17,8 +18,8 @@
 
             <property name="hibernapte.dialect" value="org.hibernate.community.dialect.SQLiteDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>

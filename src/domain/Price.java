@@ -20,6 +20,9 @@ public class Price implements EntityInterface {
     @Column(name = "price")
     private Float price;
 
+    @Column(name = "store")
+    private String store;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date")
     private Date date;
@@ -44,10 +47,36 @@ public class Price implements EntityInterface {
         this.date = date;
     }
 
+    public Price(Float price, Date date, String store) {
+        this.price = price;
+        this.date = date;
+        this.store = store;
+    }
+
     public Price(UUID uuid, Float price, Date date) {
         this.uuid = uuid;
         this.price = price;
         this.date = date;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
+    public String getStore() {
+        return store;
+    }
+
+    public void setStore(String store) {
+        this.store = store;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     @Override
@@ -59,6 +88,7 @@ public class Price implements EntityInterface {
     public String toString() {
         return "Price{" +
                 "price=" + price +
+                ", store='" + store + '\'' +
                 ", date=" + date +
                 '}';
     }

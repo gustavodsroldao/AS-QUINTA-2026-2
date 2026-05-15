@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(winget install Apache.Maven --accept-package-agreements --accept-source-agreements)"
+      "PowerShell(winget install Apache.Maven --accept-package-agreements --accept-source-agreements)",
+      "Bash(mvn compile *)",
+      "WebSearch",
+      "WebFetch(domain:www.kabum.com.br)",
+      "WebFetch(domain:lista.mercadolivre.com.br)",
+      "WebFetch(domain:www.magazineluiza.com.br)",
+      "Bash(del \"c:\\\\Users\\\\gvsta\\\\Documentos\\\\Github\\\\AS-QUINTA-2026-2\\\\products.db\")"
     ]
   }
 }

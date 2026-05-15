@@ -39,6 +39,24 @@
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.16</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.49.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -58,8 +76,31 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>install-playwright</id>
+                        <phase>none</phase>
+                        <goals><goal>exec</goal></goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-cp</argument>
+                                <classpath/>
+                                <argument>com.microsoft.playwright.CLI</argument>
+                                <argument>install</argument>
+                                <argument>chromium</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <mainClass>Main</mainClass>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-Djava.util.logging.config.file=${project.build.outputDirectory}/logging.properties</argument>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <argument>Main</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

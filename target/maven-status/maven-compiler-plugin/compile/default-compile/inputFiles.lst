@@ -1,11 +1,15 @@
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\adapters\DatabaseStorage.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\adapters\PersistInterface.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\domain\EntityInterface.java
+C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\domain\Link.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\domain\Price.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\domain\Product.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\Main.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\BaseService.java
+C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\CrawlerService.java
+C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\LinkService.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\PriceService.java
+C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\ProductLoader.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\ProductService.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\service\ServiceInterface.java
 C:\Users\gvsta\Documentos\Github\AS-QUINTA-2026-2\src\utils\GenerateValue.java

@@ -12,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "product")
 public class Product implements EntityInterface {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -27,6 +28,9 @@ public class Product implements EntityInterface {
     @Column(name = "price")
     private Float price;
 
+    @Column(name = "store")
+    private String store;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_price")
     private Date datePrice;
@@ -38,7 +42,19 @@ public class Product implements EntityInterface {
             fetch = FetchType.LAZY)
     private List<Price> historicalPrice = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Link> links = new ArrayList<>();
+
     public Product() {
+    }
+
+    public Product(String sku, String name) {
+        this.sku = sku;
+        this.name = name;
     }
 
     public Product(String sku, String name, Float price) {
@@ -75,14 +91,34 @@ public class Product implements EntityInterface {
     }
 
     public void setPrice(Float price) {
+        setPrice(price, null);
+    }
+
+    public void setPrice(Float price, String store) {
         if (this.price != null && this.datePrice != null) {
-            Price oldPrice = new Price(this.price, this.datePrice);
+            Price oldPrice = new Price(this.price, this.datePrice, this.store);
             oldPrice.setProduct(this);
             historicalPrice.add(oldPrice);
         }
-
         this.price = price;
+        this.store = store;
         this.datePrice = new Date();
+    }
+
+    public void atualizarPrecoAtual(Float price, String store) {
+        this.price = price;
+        this.store = store;
+        this.datePrice = new Date();
+    }
+
+    public void adicionarAoHistorico(Float price, String store) {
+        Price registro = new Price(price, new Date(), store);
+        registro.setProduct(this);
+        historicalPrice.add(registro);
+    }
+
+    public String getStore() {
+        return store;
     }
 
     public Date getDatePrice() {
@@ -101,6 +137,15 @@ public class Product implements EntityInterface {
         this.historicalPrice = historicalPrice;
     }
 
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public void addLink(Link link) {
+        link.setProduct(this);
+        links.add(link);
+    }
+
     @Override
     public UUID getUUID() {
         return this.uuid;
@@ -108,13 +153,26 @@ public class Product implements EntityInterface {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "UUID='" + uuid.toString() +'\'' +
-                "Sku='" + sku + '\'' +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", datePrice=" + datePrice +
-                ", historicalPrice=" + historicalPrice +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Produto: ").append(name).append(" (SKU: ").append(sku).append(")\n");
+        sb.append("  Preco atual: ").append(price != null ? String.format("R$ %.2f", price) : "nao coletado");
+        if (store != null) sb.append(" em ").append(store);
+        sb.append("\n");
+        sb.append("  Links cadastrados:\n");
+        for (Link link : links) {
+            sb.append("    - ").append(link.getStore()).append(": ").append(link.getUrl()).append("\n");
+        }
+        sb.append("  Historico de precos:\n");
+        if (historicalPrice.isEmpty()) {
+            sb.append("    (nenhum registro)\n");
+        } else {
+            for (Price p : historicalPrice) {
+                sb.append("    - R$ ").append(String.format("%.2f", p.getPrice()));
+                if (p.getStore() != null) sb.append(" em ").append(p.getStore());
+                if (p.getDate() != null) sb.append(" | ").append(p.getDate());
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }
